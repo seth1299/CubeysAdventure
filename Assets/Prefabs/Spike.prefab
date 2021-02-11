@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 2317026663115063745}
   - component: {fileID: 5229791173945634774}
   - component: {fileID: 3017735334634201528}
-  m_Layer: 0
+  - component: {fileID: -6025967278948237017}
+  m_Layer: 15
   m_Name: Spike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,8 +71,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1435507767
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 4855294993659632236, guid: f820219d71b7fc14d8c8ec047dbbaa55, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -119,3 +120,29 @@ MonoBehaviour:
   randomWaitMinimumValue: 0
   randomWaitMaximumValue: 0
   player: {fileID: 0}
+--- !u!61 &-6025967278948237017
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2905020330488814294}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

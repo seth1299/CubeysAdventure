@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6023741777073183220}
   - component: {fileID: 6023741777073183221}
   - component: {fileID: 6023741777073183218}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,8 +71,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -2035561639
-  m_SortingLayer: 1
+  m_SortingLayerID: -1435507767
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -4977328130357297758, guid: 76ed8ee4a619fe843b6c2838980d6344, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 6023741777402580568}
   - component: {fileID: 6023741777402580572}
   - component: {fileID: 6023741777402580573}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}

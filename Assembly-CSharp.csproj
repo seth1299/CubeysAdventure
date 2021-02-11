@@ -36,16 +36,18 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\FoodController.cs" />
      <Compile Include="Assets\Scripts\EnemyController.cs" />
+     <Compile Include="Assets\Scripts\SuckController (1).cs" />
+     <Compile Include="Assets\Scripts\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\CameraController.cs" />
+     <Compile Include="Assets\Scripts\InvincibilityController.cs" />
      <Compile Include="Assets\Scripts\BombController.cs" />
+     <Compile Include="Assets\Scripts\MainMenuController (1).cs" />
      <Compile Include="Assets\Scripts\BossController.cs" />
      <Compile Include="Assets\Scripts\StarController.cs" />
-     <Compile Include="Assets\Scripts\FoodController.cs" />
-     <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\SuckController (1).cs" />
-     <Compile Include="Assets\Scripts\MainMenuController (1).cs" />
-     <Compile Include="Assets\Scripts\InvincibilityController.cs" />
+     <Compile Include="Assets\Scripts\SceneChange.cs" />
+     <Compile Include="Assets\Scripts\Exit.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
@@ -601,6 +603,9 @@
     <Reference Include="Unity.Timeline.Editor">
         <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Cinemachine">
+        <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.2D.Animation.Runtime">
         <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/Unity.2D.Animation.Runtime.dll</HintPath>
     </Reference>
@@ -661,6 +666,9 @@
     <Reference Include="Unity.2D.Animation.Editor">
         <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/Unity.2D.Animation.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="com.unity.cinemachine.editor">
+        <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/com.unity.cinemachine.editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
         <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
     </Reference>
@@ -678,12 +686,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
         <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Cinemachine">
-        <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
-    </Reference>
-    <Reference Include="com.unity.cinemachine.editor">
-        <HintPath>C:/Users/Jess/Desktop/Unity/Cubey/Cubey/Library/ScriptAssemblies/com.unity.cinemachine.editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
