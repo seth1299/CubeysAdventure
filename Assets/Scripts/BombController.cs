@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BombController : MonoBehaviour
+public class BombController : MonoBehaviour, I_Suckable
 {
 
     public GameObject player;
@@ -73,6 +73,11 @@ public class BombController : MonoBehaviour
     public bool GetCanHurtPlayer()
     {
         return canHurtPlayer;
+    }
+
+    public void GetSuck()
+    {
+        StartCoroutine("getSuckedIn");
     }
 
 }

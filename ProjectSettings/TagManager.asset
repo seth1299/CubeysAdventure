@@ -4,20 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Ground
   - Enemy
-  - Ceiling
-  - Door1
-  - Door2
+  - Invincibility
   - Platform
+  - Door2
+  - Door1
+  - Ground
   - Bomb
   - Boss
-  - Burger
-  - Melon
-  - MaximumTomato
-  - JuiceBox
-  - Donut
-  - Invincibility
+  - Succ
   layers:
   - Default
   - TransparentFX
@@ -29,12 +24,12 @@ TagManager:
   - 
   - Ground
   - Block
-  - Enemy
-  - Platform
+  - Character
+  - Projectile
+  - Background
+  - Confiner
   - Door
-  - 
-  - 
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -54,4 +49,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 2259405657
+    locked: 0
+  - name: Door
+    uniqueID: 3892461813
+    locked: 0
+  - name: Player
+    uniqueID: 2859459529
+    locked: 0
+  - name: Background
+    uniqueID: 2571374137
     locked: 0

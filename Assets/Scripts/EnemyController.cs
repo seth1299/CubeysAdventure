@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour, I_Suckable
 {
     /*
 
@@ -158,6 +158,11 @@ public class EnemyController : MonoBehaviour
     public bool GetDestroyed()
     {
         return isDestroyed;
+    }
+
+    public void GetSuck()
+    {
+        StartCoroutine("getSuckedIn");
     }
     
 }

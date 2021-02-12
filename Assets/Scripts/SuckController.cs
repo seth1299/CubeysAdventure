@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,6 +26,7 @@ public class SuckController : MonoBehaviour
     // All this script does is set an EnemyController variable to the "EnemyController" script attached to the enemy that it's sucking in and then set its
     // "setCanHurtPlayer" variable to false and then the enemy will start flying towards the player. 
 
+    /*
     void Update()
     {
         if (!player.GetComponent<PlayerController>().GetHasEnemyInside())
@@ -58,6 +59,8 @@ public class SuckController : MonoBehaviour
         }
     }
 
+    */
+
     // This just sets the "other" variable to the enemy that this particle system touches.
 
     void OnTriggerEnter2D(Collider2D otherObject)
@@ -70,6 +73,16 @@ public class SuckController : MonoBehaviour
     void OnTriggerExit2D(Collider2D otherObject)
     {
         other = null;
+    }
+
+    public bool GetTouchingEnemy()
+    {
+        if (other == null)
+            return false;
+        else if (other.CompareTag("Enemy") && thisSameGameObject.isPlaying)
+            return true;
+        else
+            return false;
     }
     
 

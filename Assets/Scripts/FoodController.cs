@@ -1,12 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FoodController : MonoBehaviour
 {
     /*
-
-    Side note: Set the Animator Culling Mode to "cull completely" or else the animation will severely lag the game.
 
     "player" is the Player game object.
 
@@ -56,6 +54,7 @@ public class FoodController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("Touching player");
             if (gameObject.CompareTag("MaximumTomato"))
                 PCS.AddHealth(3);
             else if(gameObject.CompareTag("Burger") || gameObject.CompareTag("Melon"))

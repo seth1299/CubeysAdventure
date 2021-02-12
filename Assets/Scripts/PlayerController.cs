@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -68,6 +68,8 @@ public class PlayerController : MonoBehaviour
 
     The particle systems are just a left side suck and a right side suck. One goes on the left and one goes on the right of Cubey. 
 
+    "RSPSC" and "LSPSC" are just abbreviation for "Right Side Particle System Controller" and "Left Side Particle System Controller". 
+
     "other" is just a Collider2D that is useful for checking what the player is colliding with. 
 
     "star" is the star projectile that Cubey shoots out after swallowing an enemy. 
@@ -115,25 +117,30 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public LayerMask blockLayer;
     public LayerMask doorLayer;
+    public LayerMask enemyLayer;
 
     Animator anim;
 
     public ParticleSystem RightSideSuck;
     public ParticleSystem LeftSideSuck;
 
+    private SuckController RSPSC;
+    private SuckController LSPSC;
+
     private Collider2D other = null;
 
     public GameObject star;
     public GameObject boss;
 
-    public AudioSource succ;
+    private const float suckDistance = 1.15f;
+
+    public SpriteRenderer SR;
 
     // Start is called before the first frame update.
     // All of the uninitialized variables become initialized here.
     void Start()
     {
-        succ = gameObject.GetComponent<AudioSource>();
-        succ.Stop();
+        SR = GetComponent<SpriteRenderer>();
         RightSideSuck.Pause();
         RightSideSuck.Clear();
         LeftSideSuck.Pause();
@@ -145,6 +152,9 @@ public class PlayerController : MonoBehaviour
         canEnterDoor = false;
         enteringDoor = false;
         startingHealth = health;
+        RSPSC = RightSideSuck.GetComponent<SuckController>();
+        LSPSC = LeftSideSuck.GetComponent<SuckController>();
+
     }
 
     // Update is called once per frame.
@@ -195,15 +205,17 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine("EnterDoor");
         }
-        if (Input.GetKeyDown(KeyCode.Q))
-            succ.Play();
-        if (Input.GetKeyUp(KeyCode.Q))
-            succ.Stop();
 
         if (Input.GetKey(KeyCode.A) || (Input.GetKey(KeyCode.LeftArrow)))
+        {
+            SR.flipX = true;
             lastDirectionLooked = -1f;
+        }
         else if (Input.GetKey(KeyCode.D) || (Input.GetKey(KeyCode.RightArrow)))
+        {
+            SR.flipX = false;
             lastDirectionLooked = 1f;
+        }
 
     }
 
@@ -339,7 +351,7 @@ public class PlayerController : MonoBehaviour
     {
         if ( other != null)
         {
-            if ( ( other.CompareTag("Enemy") && canBeHurt))
+            if ( ( other.CompareTag("Enemy") && canBeHurt) && !( ( RSPSC.GetTouchingEnemy() == true ) || ( LSPSC.GetTouchingEnemy() == true )))
             {
                 if ( other.gameObject.GetComponent<EnemyController>().GetCanHurtPlayer() )
                 {
@@ -351,6 +363,7 @@ public class PlayerController : MonoBehaviour
                     {
                         knockback = -1 * Mathf.Abs(knockback);
                     }
+                    Debug.Log("Rawry 1");
                     StartCoroutine("PlayerHurt");
                 }
             }
@@ -366,6 +379,7 @@ public class PlayerController : MonoBehaviour
                     {
                         knockback = -1 * Mathf.Abs(knockback);
                     }
+                    Debug.Log("Rawry 2");
                     StartCoroutine("PlayerHurt");
                 }
             }
@@ -501,7 +515,6 @@ public class PlayerController : MonoBehaviour
         // spit out a star in the direction the player is facing instead of sucking in an enemy.
         if ( !hasEnemyInside  && !justSpitOut)
         {
-            
         
         // If the player is looking to the left, then Cubey sucks on the left side of him. Otherwise, Cubey sucks on the right side of him.
         if (lastDirectionLooked < 0)
@@ -511,14 +524,30 @@ public class PlayerController : MonoBehaviour
         // sucking on the left side and the left side sucking animation will play, allowing the SuckController() script (not on this game object) to start working.
         if (Input.GetKey(KeyCode.Q) && !rightSuckActive && !hasEnemyInside)
         {
+            
+            RaycastHit2D r = Physics2D.Raycast(new Vector2(GetXPosition(), GetYPosition()), new Vector2(-1, 0), suckDistance, enemyLayer);
+
+            if (r != null && r.transform != null)
+            {
+                I_Suckable suckable = r.transform.GetComponent<I_Suckable>();
+
+                if (suckable != null)
+                {
+                    suckable.GetSuck();
+                }
+            }
+            
+            //LeftSideSuck.gameObject.SetActive(true);
             leftSuckActive = true;
             isSucking = true;
             LeftSideSuck.Play();
+            
         }
 
         // Otherwise, if the player isn't meeting any of that criteria, then stop sucking on the left side.
         else
         {
+            //LeftSideSuck.gameObject.SetActive(false);
             leftSuckActive = false;
             isSucking = false;
             LeftSideSuck.Pause();
@@ -531,17 +560,33 @@ public class PlayerController : MonoBehaviour
         else 
         {
         
-        // If the player is pressing down Q and Cubey is also not currently sucking on the left side of him, then the player will be told that the player is
-        // sucking on the right side and the right side sucking animation will play, allowing the SuckController() script (not on this game object) to start working.
-        if (Input.GetKey(KeyCode.Q) && !leftSuckActive && !hasEnemyInside)
-        {
-            rightSuckActive = true;
-            isSucking = true;
-            RightSideSuck.Play();
+            // If the player is pressing down Q and Cubey is also not currently sucking on the left side of him, then the player will be told that the player is
+            // sucking on the right side and the right side sucking animation will play, allowing the SuckController() script (not on this game object) to start working.
+            if (Input.GetKey(KeyCode.Q) && !leftSuckActive && !hasEnemyInside)
+            {
+                RaycastHit2D r = Physics2D.Raycast(new Vector2(GetXPosition(), GetYPosition()), new Vector2(1, 0), suckDistance, enemyLayer);
+
+                //Debug.Log(r.transform.gameObject.name);
+
+                if (r != null && r.transform != null)
+                {
+                    I_Suckable suckable = r.transform.GetComponent<I_Suckable>();
+
+                    if (suckable != null)
+                    {
+                        suckable.GetSuck();
+                    }
+                }
+                    //RightSideSuck.gameObject.SetActive(true);
+                    rightSuckActive = true;
+                    isSucking = true;
+                    RightSideSuck.Play();
+                
         }
 
         else
         {
+            //RightSideSuck.gameObject.SetActive(false);
             rightSuckActive = false;
             isSucking = false;
             RightSideSuck.Pause();
@@ -566,7 +611,6 @@ public class PlayerController : MonoBehaviour
         // Otherwise, if none of the other criteria is met, stop Cubey from sucking on both sides.
         else
         {
-            succ.Stop();
             leftSuckActive = false;
             isSucking = false;
             rightSuckActive = false;

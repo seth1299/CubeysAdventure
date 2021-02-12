@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,9 +44,9 @@ public class StarController : MonoBehaviour
         }
 
         if ( lastDirectionLooked < 0)
-            transform.Rotate (new Vector3 (0, 0, -150) * Time.deltaTime);
+            transform.Rotate (new Vector3 (0, 0, -90) * Time.deltaTime);
         else
-            transform.Rotate (new Vector3 (0, 0, 150) * Time.deltaTime);
+            transform.Rotate (new Vector3 (0, 0, 90) * Time.deltaTime);
     }
 
     // This just destroys the enemy and the star if the Star collides with an enemy.
