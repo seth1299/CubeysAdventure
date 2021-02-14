@@ -141,6 +141,8 @@ public class PlayerController : MonoBehaviour
 
     private SpriteRenderer SR;
 
+    public AudioSource SpitOutSFX, JumpSFX;
+
     // Start is called before the first frame update.
     // All of the uninitialized variables become initialized here.
     void Start()
@@ -165,6 +167,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame.
     void Update()
     {
+
+        if (transform.position.x < -8.47f)
+            gameObject.transform.position = new Vector2 (-8.4f, transform.position.y );
+        else if (transform.position.x > 100f)
+            gameObject.transform.position = new Vector2 (100f, transform.position.y );
 
         // Two float variables "horiztonal" and "vertical" are set to the direction the player is facing.
         // "horizontal" will be -1 if the player is facing left and 1 if the player is facing right.
@@ -260,6 +267,8 @@ public class PlayerController : MonoBehaviour
     {
         if ( ( Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) ) && canJumpAnymore )
         {
+            if (GetIsGrounded())
+                JumpSFX.Play();
             notFalling = true;
             anim.SetInteger("State", 4); //This is the float "animation" where it's just thicc Kirby
             gameObject.transform.position = new Vector2 (transform.position.x, transform.position.y + 0.1f);
@@ -373,6 +382,7 @@ public class PlayerController : MonoBehaviour
             anim.SetInteger("State", -10); //This is for running left while having an enemy inside
         else if ( ( Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) ) && !launchedOffGround && !isSucking)
         {
+            
             anim.SetInteger("State", 2); //This is for the initial jump
             launchedOffGround = true;
         }
@@ -656,6 +666,7 @@ public class PlayerController : MonoBehaviour
         // It also tells the player that they no longer have an enemy inside of them so they can suck enemies again.
         else if (Input.GetKeyDown(KeyCode.Q) && hasEnemyInside)
         {
+            SpitOutSFX.Play();
             alreadySwallowed = false;
             justSpitOut = true;
             Destroy(Instantiate(star, new Vector3(GetXPosition(), GetYPosition(), transform.position.z), Quaternion.identity ), 2f);

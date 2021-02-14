@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 2673750576888305624}
   - component: {fileID: 559530861}
   - component: {fileID: 559530858}
+  - component: {fileID: 1752543255381495358}
   m_Layer: 10
   m_Name: Cubey
   m_TagString: Player
@@ -211,6 +212,8 @@ MonoBehaviour:
   LeftSideSuck: {fileID: 1810321709835296231}
   star: {fileID: 2673750576380986318}
   boss: {fileID: 0}
+  SpitOutSFX: {fileID: 0}
+  JumpSFX: {fileID: 0}
 --- !u!50 &559530861
 Rigidbody2D:
   serializedVersion: 4
@@ -258,6 +261,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.4115295, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1752543255381495358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2673750576888305605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca8eb1010b51ae14aab21e202fc9e07c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 2673750576888305605}
 --- !u!1 &2673750577186066028
 GameObject:
   m_ObjectHideFlags: 0

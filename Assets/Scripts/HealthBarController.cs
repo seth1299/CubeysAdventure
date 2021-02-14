@@ -11,6 +11,8 @@ public class HealthBarController : MonoBehaviour
 
     private int health, bossHealth;
 
+    public AudioSource succ;
+
     void Start()
     {
         PCS = player.GetComponent<PlayerController>();
@@ -22,6 +24,11 @@ public class HealthBarController : MonoBehaviour
     {
         health = PCS.GetHealth();
         bossHealth = BCS.GetHealth();
+
+        if (PCS.GetIsSucking())
+            succ.Play();
+        else
+            succ.Stop();
 
         if (health == 4)
         {

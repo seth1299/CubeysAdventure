@@ -19,6 +19,8 @@ public class FoodController : MonoBehaviour
 
     Animator anim;
 
+    public AudioSource FoodSFX;
+
     /*
     
     This just changes the appearance of the food to match what it's tagged with. This script only ones once, to not lag the game.
@@ -54,6 +56,7 @@ public class FoodController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            FoodSFX.Play();
             Debug.Log("Touching player");
             if (gameObject.CompareTag("MaximumTomato"))
                 PCS.AddHealth(3);

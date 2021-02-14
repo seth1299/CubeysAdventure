@@ -6,6 +6,13 @@ using UnityEngine.SceneManagement;
 public class MainMenuController : MonoBehaviour
 {
 
+public AudioSource click;
+
+public void Click()
+{
+    click.Play();
+}
+
 // The StartGame() function loads the "GameScene" scene, which should be the actual game content.
 public void StartGame()
 {
