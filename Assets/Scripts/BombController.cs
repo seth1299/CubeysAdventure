@@ -5,17 +5,20 @@ using UnityEngine;
 public class BombController : MonoBehaviour, I_Suckable
 {
 
-    public GameObject player;
+    public GameObject player, explosionSFX;
     public float speed;
 
     private PlayerController PCS;
+    private BombExplosionSFX_Controller ESC;
 
-    //private bool isDestroyed = false;
+    private bool isDestroyed = false;
     private bool canHurtPlayer = true;
+    private bool gettingSuckedIn = false;
 
     void Start()
     {
         PCS = player.GetComponent<PlayerController>();
+        ESC = explosionSFX.GetComponent<BombExplosionSFX_Controller>();
     }
 
     void Update()
@@ -26,6 +29,7 @@ public class BombController : MonoBehaviour, I_Suckable
 
     IEnumerator getSuckedIn()
     {
+        gettingSuckedIn = true;
         // "playerXPos" just gets the X position of the "player" GameObject attached to this script, and "playerYPos" gets the y position of the same GameObject. 
         // "PCS" is the aforementioned PlayerController at the beginning of the script that is just shorthand for "player.GetComponent<PlayerController>()". 
         // "PCS" is just significantly easier to type than that repeatedly.
@@ -36,15 +40,16 @@ public class BombController : MonoBehaviour, I_Suckable
         // and if the player is currently sucking in. If all three conditions are true, then the while loop is executed and will continue to execute as long as all
         // three conditions are true.
 
-        while ( transform.position.x != playerXPos && transform.position.y != playerYPos && PCS.GetIsSucking() )
+        //&& transform.position.y != playerYPos
+
+        while ( Mathf.Round(transform.position.x) != Mathf.Round(playerXPos) && PCS.GetIsSucking() )
         {
             // This code just makes the enemy move very slowly towards the player's position while the player is sucking them in.
 
-            gameObject.transform.position = new Vector2 (transform.position.x + ( ( playerXPos - transform.position.x ) / 200), transform.position.y + ( ( playerYPos - transform.position.y ) / 200));
+            gameObject.transform.position = new Vector2 (transform.position.x + ( ( playerXPos - transform.position.x ) / 10), transform.position.y + ( ( playerYPos - transform.position.y ) / 10));
             
             // "yield return null" simply means "wait a frame". This means that this script slowly happens repeatedly over time instead of just instantly changing the
             // X and Y positions of the enemy without smoothly moving them towards the player.
-
             yield return null;
         }
 
@@ -56,7 +61,7 @@ public class BombController : MonoBehaviour, I_Suckable
 
         // This tells the player that the enemy they sucked in was destroyed so that the player knows that they successfully swallowed an enemy.
 
-        //isDestroyed = true;
+        isDestroyed = true;
         Destroy(gameObject);
 
     }
@@ -78,6 +83,19 @@ public class BombController : MonoBehaviour, I_Suckable
     public void GetSuck()
     {
         StartCoroutine("getSuckedIn");
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other != null && gettingSuckedIn == false)
+        {
+            if (other.CompareTag("Player") && canHurtPlayer)
+            {
+                if (PCS.GetCanBeHurt())
+                    ESC.Explode();
+                Destroy(gameObject, 0.1f);
+            }
+        }
     }
 
 }

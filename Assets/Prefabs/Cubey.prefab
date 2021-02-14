@@ -190,7 +190,7 @@ MonoBehaviour:
   Door2_X_Axis: -151.92
   Door2_Y_Axis: -463.5253
   health: 4
-  lives: 3
+  lives: 2
   numAllowedEnemiesToSwallow: 1
   hasEnemyInside: 0
   isGroundedChecker: {fileID: 2673750577186066019}
@@ -204,6 +204,9 @@ MonoBehaviour:
   doorLayer:
     serializedVersion: 2
     m_Bits: 16384
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
   RightSideSuck: {fileID: 6815777283492624308}
   LeftSideSuck: {fileID: 1810321709835296231}
   star: {fileID: 2673750576380986318}

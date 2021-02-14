@@ -115,7 +115,7 @@ public class EnemyController : MonoBehaviour, I_Suckable
         // and if the player is currently sucking in. If all three conditions are true, then the while loop is executed and will continue to execute as long as all
         // three conditions are true.
 
-        while ( transform.position.x != playerXPos && transform.position.y != playerYPos && PCS.GetIsSucking() )
+        while ( Mathf.Round(transform.position.x) != Mathf.Round(playerXPos) && PCS.GetIsSucking() )
         {
             // This code just makes the enemy move very slowly towards the player's position while the player is sucking them in.
             gameObject.transform.position = new Vector2 (transform.position.x + ( ( playerXPos - transform.position.x ) / 400), transform.position.y + ( ( playerYPos - transform.position.y ) / 1.05f));

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -110,6 +111,10 @@ public class PlayerController : MonoBehaviour
     private bool rightSuckActive = false;
     public bool hasEnemyInside = false;
     private bool justSpitOut = false;
+    private bool isDying = false;
+    private bool isInvincible = false;
+    private bool isSwallowing = false;
+    private bool alreadySwallowed = false;
 
     public Transform isGroundedChecker; 
     public Transform blockChecker;
@@ -134,7 +139,7 @@ public class PlayerController : MonoBehaviour
 
     private const float suckDistance = 1.15f;
 
-    public SpriteRenderer SR;
+    private SpriteRenderer SR;
 
     // Start is called before the first frame update.
     // All of the uninitialized variables become initialized here.
@@ -168,19 +173,45 @@ public class PlayerController : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         vertical = Input.GetAxisRaw("Vertical");
 
+        if (leftSuckActive && lastDirectionLooked == 1)
+        {
+            leftSuckActive = false;
+            isSucking = false;
+            LeftSideSuck.Pause();
+            LeftSideSuck.Clear();
+        }
+
+        if (rightSuckActive && lastDirectionLooked == -1)
+        {
+            rightSuckActive = false;
+            isSucking = false;
+            RightSideSuck.Pause();
+            RightSideSuck.Clear();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Q) && !isInvincible)
+        {
+            isSucking = false;
+            canBeHurt = true;
+        }
+            
+            
+
         // This line of code simply moves the player left and right. That's all it does.
 
-        if ( !leftSuckActive && !rightSuckActive )
+        if ( !leftSuckActive && !rightSuckActive && !isDying)
             gameObject.transform.position = new Vector2 (transform.position.x + (horizontal * speed), transform.position.y );
 
         // These are all calls to functions for checking if the player is on the ground, then check if the player wants to jump, then check if there's a block above
         // the player, then if the player isn't holding the jump key and is in the air then they start falling, then it checks if the player is touching an enemy.
         
+        Animate();
+
+        if ( !isDying )
+        {
         GetEnemyCanHurt();
 
         Suck();
-
-        Animate();
 
         GetGrounded();
 
@@ -206,16 +237,19 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("EnterDoor");
         }
 
-        if (Input.GetKey(KeyCode.A) || (Input.GetKey(KeyCode.LeftArrow)))
+        if (Input.GetKeyDown(KeyCode.A) || (Input.GetKeyDown(KeyCode.LeftArrow)))
         {
             SR.flipX = true;
             lastDirectionLooked = -1f;
         }
-        else if (Input.GetKey(KeyCode.D) || (Input.GetKey(KeyCode.RightArrow)))
+        else if (Input.GetKeyDown(KeyCode.D) || (Input.GetKeyDown(KeyCode.RightArrow)))
         {
             SR.flipX = false;
             lastDirectionLooked = 1f;
         }
+        }
+        
+        
 
     }
 
@@ -318,14 +352,25 @@ public class PlayerController : MonoBehaviour
 
     // Animate handles changing the player's animations.
 
+    // Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)
+    // Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)
+
     void Animate()
     {
-        if ( gettingHurt )
-            anim.SetInteger("State", 5); //This is the "kirby hurt" animation state
-        else if ( (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ) && !launchedOffGround && !isSucking)
-            anim.SetInteger("State", 1); //This is for running right
-        else if ( ( Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ) && !launchedOffGround && !isSucking)
-            anim.SetInteger("State", -1); //This is for running left
+        if ( isDying )
+            anim.SetInteger("State", 8); //This is the "cubey death" animation state
+        else if ( gettingHurt )
+            anim.SetInteger("State", 5); //This is the "cubey hurt" animation state
+        else if ( isSwallowing && !alreadySwallowed)
+            anim.SetInteger("State", 9);
+        else if ( (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && !launchedOffGround && !isSucking &&!hasEnemyInside)
+            anim.SetInteger("State", 1); //This is for running right while not having an enemy inside
+        else if ( ( Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ) && !launchedOffGround && !isSucking &&!hasEnemyInside)
+            anim.SetInteger("State", -1); //This is for running left while not having an enemy inside
+        else if ( (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && !launchedOffGround && !isSucking &&hasEnemyInside)
+            anim.SetInteger("State", 10); //This is for running right while having an enemy inside
+        else if ( ( Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ) && !launchedOffGround && !isSucking &&hasEnemyInside)
+            anim.SetInteger("State", -10); //This is for running left while having an enemy inside
         else if ( ( Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) ) && !launchedOffGround && !isSucking)
         {
             anim.SetInteger("State", 2); //This is for the initial jump
@@ -334,7 +379,7 @@ public class PlayerController : MonoBehaviour
         else if ( ( Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S) ) && isGrounded && !isSucking)
             anim.SetInteger("State", 3); //This is for ducking while the player is on the ground
         else if ( launchedOffGround && notFalling && !isSucking)
-            anim.SetInteger("State", 4); //This is the thicc Kirby in the air animation
+            anim.SetInteger("State", 4); //This is the thicc cubey in the air animation
         else if ( enteringDoor )
             anim.SetInteger("State", 6); //This is the entering door animation
         else if ( rightSuckActive )
@@ -346,12 +391,13 @@ public class PlayerController : MonoBehaviour
     }
 
     // This OnTriggerEnter2D function makes the player get hurt when they walk into an enemy or an enemy projectile.
+    // && !( ( RSPSC.GetTouchingEnemy() == true ) || ( LSPSC.GetTouchingEnemy() == true ))
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if ( other != null)
         {
-            if ( ( other.CompareTag("Enemy") && canBeHurt) && !( ( RSPSC.GetTouchingEnemy() == true ) || ( LSPSC.GetTouchingEnemy() == true )))
+            if ( ( other.CompareTag("Enemy") && canBeHurt) )
             {
                 if ( other.gameObject.GetComponent<EnemyController>().GetCanHurtPlayer() )
                 {
@@ -363,11 +409,10 @@ public class PlayerController : MonoBehaviour
                     {
                         knockback = -1 * Mathf.Abs(knockback);
                     }
-                    Debug.Log("Rawry 1");
                     StartCoroutine("PlayerHurt");
                 }
             }
-            else if ( other.CompareTag("Bomb") && canBeHurt)
+            else if ( other.CompareTag("Bomb") && canBeHurt )
             {
                 if ( other.gameObject.GetComponent<BombController>().GetCanHurtPlayer() )
                 {
@@ -379,7 +424,6 @@ public class PlayerController : MonoBehaviour
                     {
                         knockback = -1 * Mathf.Abs(knockback);
                     }
-                    Debug.Log("Rawry 2");
                     StartCoroutine("PlayerHurt");
                 }
             }
@@ -450,14 +494,16 @@ public class PlayerController : MonoBehaviour
                     yield return new WaitForSeconds(.6f);
                     
                     if (targetDoor == 2)
-                    {
+                    { 
                         currentLevel = 2; //55, -2.119f
-                        gameObject.transform.position = new Vector2(Door2_X_Axis, Door2_Y_Axis);
+                        SceneManager.LoadScene("LevelTwo");
+                        //gameObject.transform.position = new Vector2(Door2_X_Axis, Door2_Y_Axis);
                     }
                     else
                     {
                         currentLevel = 1; //-2.356956f, 2.27f
-                        gameObject.transform.position = new Vector2(Door1_X_Axis, Door1_Y_Axis);
+                        SceneManager.LoadScene("LevelOne");
+                        //gameObject.transform.position = new Vector2(Door1_X_Axis, Door1_Y_Axis);
                     }
                     
                     yield return new WaitForSeconds(0.001f);
@@ -494,6 +540,7 @@ public class PlayerController : MonoBehaviour
         // If your health reaches or goes below 0, then you lose a life and your health is set back to max.
         if ( health <= 0 )
         {
+            StartCoroutine("Die");
             lives -= 1;
             health = startingHealth;
         }
@@ -504,6 +551,15 @@ public class PlayerController : MonoBehaviour
             gameObject.SetActive(false);
         }
         
+    }
+
+    IEnumerator Die()
+    {
+        isDying = true;
+        canBeHurt = false;
+        yield return new WaitForSeconds(1.0f);
+        isDying = false;
+        canBeHurt = true;
     }
 
     // The Suck() function handles the player sucking in enemies.
@@ -524,7 +580,7 @@ public class PlayerController : MonoBehaviour
         // sucking on the left side and the left side sucking animation will play, allowing the SuckController() script (not on this game object) to start working.
         if (Input.GetKey(KeyCode.Q) && !rightSuckActive && !hasEnemyInside)
         {
-            
+            canBeHurt = false; //Extremely lazy solution to the enemies hurting Cubey while being sucked in, but it works
             RaycastHit2D r = Physics2D.Raycast(new Vector2(GetXPosition(), GetYPosition()), new Vector2(-1, 0), suckDistance, enemyLayer);
 
             if (r != null && r.transform != null)
@@ -564,9 +620,8 @@ public class PlayerController : MonoBehaviour
             // sucking on the right side and the right side sucking animation will play, allowing the SuckController() script (not on this game object) to start working.
             if (Input.GetKey(KeyCode.Q) && !leftSuckActive && !hasEnemyInside)
             {
+                canBeHurt = false; //Extremely lazy solution to the enemies hurting Cubey while being sucked in, but it works
                 RaycastHit2D r = Physics2D.Raycast(new Vector2(GetXPosition(), GetYPosition()), new Vector2(1, 0), suckDistance, enemyLayer);
-
-                //Debug.Log(r.transform.gameObject.name);
 
                 if (r != null && r.transform != null)
                 {
@@ -601,6 +656,7 @@ public class PlayerController : MonoBehaviour
         // It also tells the player that they no longer have an enemy inside of them so they can suck enemies again.
         else if (Input.GetKeyDown(KeyCode.Q) && hasEnemyInside)
         {
+            alreadySwallowed = false;
             justSpitOut = true;
             Destroy(Instantiate(star, new Vector3(GetXPosition(), GetYPosition(), transform.position.z), Quaternion.identity ), 2f);
             StartCoroutine("SpitOut");
@@ -608,9 +664,15 @@ public class PlayerController : MonoBehaviour
             SetNumAllowedEnemiesToSwallow(1);
         }
 
+        else if (hasEnemyInside && !isSwallowing && !alreadySwallowed && !justSpitOut)
+        {
+            StartCoroutine("SwallowingAnimation");
+        }
+
         // Otherwise, if none of the other criteria is met, stop Cubey from sucking on both sides.
         else
         {
+            canBeHurt = true;
             leftSuckActive = false;
             isSucking = false;
             rightSuckActive = false;
@@ -623,6 +685,19 @@ public class PlayerController : MonoBehaviour
         
         
     }
+
+    public IEnumerator SwallowingAnimation()
+    {
+        
+        isSwallowing = true;
+        
+        yield return new WaitForSeconds(1.0f);
+
+        alreadySwallowed = true;
+
+        isSwallowing = false; 
+    }
+
     // The SpitOut function ensures that while the player is holding down the Q button, nothing happens, but when they let go of it then "justSpitOut" is set
     // to false and the coroutine is stopped.
 
@@ -641,7 +716,9 @@ public class PlayerController : MonoBehaviour
     public IEnumerator Invincibility()
     {
         canBeHurt = false;
+        isInvincible = true;
         yield return new WaitForSeconds(5.0f);
+        isInvincible = false;
         canBeHurt = true;
     }
 
@@ -694,6 +771,11 @@ public class PlayerController : MonoBehaviour
         {
             canBeHurt = other.gameObject.GetComponent<EnemyController>().GetCanHurtPlayer();
         }
+        return canBeHurt;
+    }
+
+    public bool GetCanBeHurt()
+    {
         return canBeHurt;
     }
 

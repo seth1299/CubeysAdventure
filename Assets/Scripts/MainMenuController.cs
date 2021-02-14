@@ -9,7 +9,7 @@ public class MainMenuController : MonoBehaviour
 // The StartGame() function loads the "GameScene" scene, which should be the actual game content.
 public void StartGame()
 {
-    SceneManager.LoadScene("Play");
+    SceneManager.LoadScene("LevelOne");
 }
 
 // The HowToPlay() function loads the "HowToPlay" scene, which should contain the instructions for how to play the game.

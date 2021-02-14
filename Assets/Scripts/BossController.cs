@@ -24,32 +24,50 @@ public class BossController : MonoBehaviour
     private int index;
     private int randNum;
 
+    private bool isJumping = false;
+
     public float speed;
 
     private Animator anim;
 
     public GameObject bomb;
 
+    private Collider2D otherObject = null;
+
+    public Transform isGroundedChecker;
+
+    public LayerMask groundLayer;
+
+    public AudioSource explosion;
+
     void Start()
     {
         anim = GetComponent<Animator>();
         StartCoroutine("Attack");
+        //explosion = GetComponent<AudioSource>();
     }
 
     IEnumerator Attack()
     {
-        anim.SetInteger("State", 0); //This is the idle animation
-        yield return new WaitForSeconds(Random.Range(1.5f, 3.5f));
-        anim.SetInteger("State", 1); //This is the walking animation
-        randNum = Random.Range(50, 325);
 
+        anim.SetInteger("State", 0); //This is the idle animation
+        yield return new WaitForSeconds(Random.Range(0.75f, 1.5f));
+        anim.SetInteger("State", 1); //This is the walking animation
+        randNum = Random.Range(80, 150);
+
+        if (TouchingGround())
+        {
+        isJumping = true;
         for ( index = 0; index < randNum; index++ )
         {
-            gameObject.transform.position = new Vector2 (transform.position.x, transform.position.y + (speed / 2));
+            gameObject.transform.position = new Vector2 (transform.position.x, transform.position.y + (speed / 1.5f));
             yield return null;
         }
+        isJumping = false;
 
         Destroy(Instantiate(bomb, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity ), 6f);
+        }
+        
         StartCoroutine("Attack");
     }
 
@@ -65,4 +83,45 @@ public class BossController : MonoBehaviour
         return bossHealth;
     }
 
+    void Update()
+    {
+        if (!TouchingGround() && !isJumping)
+                gameObject.transform.position = new Vector2 (transform.position.x, ( transform.position.y - 0.025f ) );
+    }
+
+    private bool TouchingGround()
+    {
+
+    Collider2D collider = Physics2D.OverlapCircle(isGroundedChecker.position, 0.05f, groundLayer); 
+
+    if (collider != null) 
+        return true;
+
+    else 
+        return false;
+
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other != null)
+        {
+            if (!other.CompareTag("Bomb"))
+            {
+                otherObject = other;
+            }
+        }
+        
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        otherObject = null;
+    }
+
+    public void Explode()
+    {
+        explosion.Play();
+    }
+    
 }

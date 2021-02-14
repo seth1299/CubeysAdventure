@@ -24,18 +24,13 @@ public class CameraController : MonoBehaviour
     private int playerLives, playerHealth, bossHealth;
 
     // These are just the UI text for game over, health, lives, and boss health.
-    public TextMeshProUGUI gameOverText;
-    public TextMeshProUGUI healthText;
     public TextMeshProUGUI livesText;
-    public TextMeshProUGUI bossHealthText;
 
     void Start()
     {
         PCS = target.GetComponent<PlayerController>();
         BCS = boss.GetComponent<BossController>();
 
-        gameOverText.text = "";
-        healthText.text = "";
         livesText.text = "";
     }
 
@@ -75,12 +70,6 @@ public class CameraController : MonoBehaviour
     void UpdateText()
     {
         livesText.text = "Lives: " +playerLives;
-        healthText.text = "Health: " +playerHealth;
-
-        if (boss != null && PCS.GetCurrentLevel() == 2)
-            bossHealthText.text = "Boss health: " +bossHealth;
-        else
-            bossHealthText.text = "";
         
         if (playerLives <= 0)
         {
